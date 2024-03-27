@@ -1,0 +1,135 @@
+﻿@page "/book/{bookId?}"
+@inject NavigationManager nav
+@inject APIservice api
+@inject IJSRuntime JSRuntime
+
+
+@if (books == null)
+{
+    <p>Loading...</p>
+}
+else if (books.Count == 0)
+{
+    <p>Book not found.</p>
+}
+else
+{
+    <h1 style="color:blanchedalmond">@book.BookName</h1>
+    <h5> the genre of the book- @book.Genre</h5>
+    <h5> the writer- @book.Writer</h5>
+
+    <p>How many stars did the book get: </p>
+    
+    @foreach (var r in reviews)
+    {
+        <div>
+            @for (int i = 1; i <= 5; i++)
+            {
+                <span class="star @(i <= r.Star ? "filled" : "")">&#9733;</span>
+            }
+        </div>
+    }
+   
+
+    <p>Comments:</p>
+    <ul>
+        @foreach (var c in comments)
+        {
+            <li>@c.Comment</li>
+        }
+    </ul>
+   
+        <label for="exampleInputUserName" class="form-label">Want to add a comment?</label>
+        <input type="text" class="form-control" @bind=comTxt />
+    <p>  </p>
+        <button type="button" class="btn btn-outline-dark" @onclick="@((e)=>SendAdd(e, comTxt))">send</button>
+
+  
+
+}
+
+@if(priMB!= null  )
+{
+    <h5> This book has a movie! feel free to watch the trailer :) </h5>
+        <iframe width="560" height="315" src="@("https://youtube.com/embed/"+priMB.Trailer)" frameborder="0" allowfullscreen></iframe>
+}
+<p>
+    <button @onclick="GoBack">Go Back</button>
+</p>
+<style>
+    body {
+        background-color: lightpink;
+    }
+
+    .star {
+        color: #aaa; /* Color for unfilled stars */
+        font-size: 24px; /* Adjust the font size of the stars */
+    }
+
+        .star.filled {
+            color: #f8d32a; /* Color for filled stars */
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string bookId { get; set; }
+
+    private MovieBooks priMB;
+
+    public Books book;
+    private string comTxt;
+    private List<MovieBooks> mBook;
+    private List<Books> books;
+    private List<Genre> genres;
+    private List<Review> reviews;
+    private List<Comments> comments;
+
+    private async void SendAdd(MouseEventArgs e, string commentText)
+    {
+        Comments newCom = new Comments { Comment = commentText };
+        await api.InsertComments(newCom);
+        comments.Add(newCom);
+        comTxt = string.Empty;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            books = await api.GetBooks();
+            genres = await api.GetGenre();
+            reviews = await api.GetReview();
+            reviews = reviews.FindAll(b => b.BookId.Id == int.Parse(this.bookId));
+            comments = await api.GetComments();
+            comments = comments.FindAll(b => b.BookId.Id == int.Parse(this.bookId));
+
+            book = books.Find(b => b.Id == int.Parse(this.bookId));
+            mBook= await api.GetMovieBooks();
+            priMB = mBook.Find(x => x.Id == int.Parse(bookId));
+
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back"); // Navigate back one step in the browser history
+    }
+
+}
+
+
+
+
+
+
+
+
+
+

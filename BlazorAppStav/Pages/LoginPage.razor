@@ -1,0 +1,46 @@
+﻿@page "/GenresPage"
+@inject NavigationManager nav
+@inject APIservice api
+<h4 style="color:brown">:) בחרו בזאנר שאליו משתייך הספר שברצונכם למצוא ביקורות עליו </h4>
+<PageTitle> StavBooks</PageTitle>
+
+<form>
+    <button type="button" class="btn btn-outline-dark" @onclick=RomanceBooks>רומנטיקה</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=ComedyBooks>קומדיה</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=HorrorBooks>אימה</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=SciFicBooks>מדע בידיוני</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=ComicsBooks>קומיקס</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=FantasyBooks>פנטזיה</button>
+</form>
+<style>
+    body {
+        background-color: lightpink;
+    }
+</style>
+@code {
+    private void RomanceBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+    private void ComedyBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+    private void HorrorBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+    private void SciFicBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+    private void ComicsBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+    private void FantasyBooks()
+    {
+        nav.NavigateTo("/LoginPage", true);
+    }
+
+}

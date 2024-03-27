@@ -1,0 +1,86 @@
+﻿@page "/"
+@inject NavigationManager nav
+@inject APIservice api
+
+<PageTitle>StavBooks</PageTitle>
+
+<h1>WELCOME TO BOOKSTAV!</h1>
+
+<h4> In order to use the website in need to sign in! </h4>
+
+<form>
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" @bind="emailUser" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputUserName" class="form-label" >UserName</label>
+        <input type="text" class="form-control" @bind="userName" />
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputName" class="form-label">Password</label>
+        <input type="password" class="form-control" @bind="passUser" id="exampleInputPassword1">
+    </div>
+    <button type="button" class="btn btn-primary" @onclick=LoginButton>Login</button>
+</form>
+
+@if (IfCorrect)
+{
+    <h5 style="color:red">אחד מן הנתונים שהוכנסו הם שגויים</h5>
+}
+
+
+<style>
+    body{
+        background-color:lightpink;
+        }
+</style>
+
+@code 
+{
+    protected override void OnInitialized()
+    {
+        IfCorrect = false;
+
+    }
+    private bool IfCorrect;
+
+    private string emailUser;
+    private string userName;
+    private string passUser;
+    private User user;
+
+    private async void LoginButton()
+    {
+        IfCorrect = false;
+        try
+        {
+            var x = await api.Login("stav.shakuf@gmail.com","סתיו שקוף",2812006);
+
+            // var x = await api.Login(emailUser, userName, int.Parse(passUser));
+            if (x.IsSuccessStatusCode)
+            { user = (User)await x.Content.ReadFromJsonAsync<User>(); }
+
+            if (user == null)
+            {
+                IfCorrect = true;
+            }
+            else
+            {
+                nav.NavigateTo("/homePage", true);
+
+            }
+            
+        }
+        catch
+        {
+             IfCorrect = true;
+        }
+
+       
+
+    }
+    
+
+}

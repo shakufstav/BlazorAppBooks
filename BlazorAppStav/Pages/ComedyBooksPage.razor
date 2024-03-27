@@ -1,0 +1,112 @@
+﻿@page "/books/{genre?}"
+@inject NavigationManager nav
+@inject APIservice api
+@inject IJSRuntime JSRuntime
+
+<h3>List of Books - @genre</h3>
+
+
+@if(genres != null && genres.Count > 0)
+{
+    <button type="button" class="btn btn-outline-dark" @onclick="(() => NavToGenre(String.Empty))">הכל</button>
+    @foreach (var g in genres)
+    {
+        <button type="button" class="btn btn-outline-dark" @onclick="(() => NavToGenre(g.GenreName))">@g.GenreName</button>
+    }
+}
+
+
+<p>  </p>
+
+@if (books == null)
+{
+    <p>Loading...</p>
+}
+else if (books.Count == 0)
+{
+    <p>No books found.</p>
+}
+else
+{
+   
+        @foreach (var book in books)
+        {
+            @if (genre!= null && genre != string.Empty)
+            {
+                if (@book.Genre.GenreName == genre)
+                {
+                <button type="button" class="book-button" @onclick="(() => NavToBook(book.Id))">@book.BookName</button>
+
+                }
+            }
+            else
+            {
+            <button type="button" class="book-button" @onclick="(() => NavToBook(book.Id))">@book.BookName</button>
+
+            }
+        }
+   
+}
+<p> 
+    <button @onclick="GoBack">Go Back</button>
+</p>
+
+<style>
+    body {
+        background-color: lightpink;
+    }
+</style>
+
+
+@code {
+    [Parameter]
+    public string genre { get; set; }
+
+
+
+    private List<Books> books;
+    private List<Genre> genres;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            books = await api.GetBooks();
+            genres = await api.GetGenre();
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+    protected void NavToGenre(string genreName)
+    {
+        // nav.NavigateTo("/books/" + genreName, true);
+        genre = genreName;
+    }
+
+    protected void NavToBook(int bookID)
+    {
+        nav.NavigateTo("/book/" + bookID, true);
+      
+    }
+
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back"); // Navigate back one step in the browser history
+    }
+
+
+    
+}
+
+
+
+
+
+
+
+
+
+

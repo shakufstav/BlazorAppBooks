@@ -1,0 +1,47 @@
+﻿@page "/homePage"
+@inject NavigationManager nav
+@inject APIservice api
+
+<h1>!שמחים שהתחברתם אלינו</h1>
+<h6 style="color:brown">בחרו בסוג הספר שתרצו למצוא ביקורת עליו</h6>
+<PageTitle>StavBooks</PageTitle>
+
+<form>
+    <button type="button" class="btn btn-outline-dark" @onclick=GenreBooks>ספרים לפי זאנרים</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=BookOfTheWeek>ספר השבוע</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=MoviesBooks>ספרים המבוססים על סרטים</button>
+    <button type="button" class="btn btn-outline-dark" @onclick=DigiBooks>ספרים דיגיטליים</button>
+
+</form>
+
+<style>
+    body {
+        background-color: lightpink;
+    }
+</style>
+
+@code {
+    private void GenreBooks()
+    {
+
+        nav.NavigateTo("/books/", true);
+    }
+
+    private void BookOfTheWeek()
+    {
+        nav.NavigateTo("/book/21", true);
+    }
+
+    private void MoviesBooks()
+    {
+        nav.NavigateTo("/moviebooks/", true);
+    }
+
+    private void DigiBooks()
+    {
+        nav.NavigateTo("/homePage", true);
+    }
+
+
+
+}
